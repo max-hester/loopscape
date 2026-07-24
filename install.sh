@@ -12,16 +12,19 @@ trap 'rm -rf "$TMP"' EXIT
 
 echo "Loopscape skill installer"
 
+SRC=""
 if command -v git >/dev/null 2>&1; then
-  git clone --depth 1 --branch "$BRANCH" "${REPO}.git" "$TMP/repo" >/dev/null 2>&1
-  SRC="$TMP/repo/skills/loopscape"
-else
-  echo "  git not found -- downloading tarball..."
+  if git clone --depth 1 --branch "$BRANCH" "${REPO}.git" "$TMP/repo" >/dev/null 2>&1; then
+    SRC="$TMP/repo/skills/loopscape"
+  fi
+fi
+if [ -z "$SRC" ] || [ ! -f "$SRC/SKILL.md" ]; then
+  echo "  downloading tarball..."
   curl -fsSL "${REPO}/archive/refs/heads/${BRANCH}.tar.gz" | tar -xz -C "$TMP"
   SRC="$(find "$TMP" -type d -path '*/skills/loopscape' | head -1)"
 fi
 
-[ -f "$SRC/SKILL.md" ] || { echo "error: skill not found in download" >&2; exit 1; }
+[ -n "$SRC" ] && [ -f "$SRC/SKILL.md" ] || { echo "error: skill not found in download" >&2; exit 1; }
 
 install_to () { mkdir -p "$(dirname "$1")"; rm -rf "$1"; cp -R "$SRC" "$1"; echo "  installed -> $1"; }
 
