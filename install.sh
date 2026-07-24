@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Loopscape skill installer -- installs the loop-visualizer skill for Claude Code and Codex CLI.
 # Runs entirely on your machine. Nothing is uploaded.
-set -euo pipefail
+set -eu
 
 REPO="https://github.com/max-hester/loopscape"
 BRANCH="main"
